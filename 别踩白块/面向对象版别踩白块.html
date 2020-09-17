@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        tr{
+            border: none;
+        }
+        tbody{
+            border: none;
+        }
+        .black{
+            background-color: black;
+        }
+        .box{
+            width: 404px;
+            height: 404px;
+            border-color:  #4d4dff;
+            margin: 0 auto;
+            margin-top: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+        .box .move td{
+            float: left;
+            border: 1px solid #808080;
+            width: 98px;
+            height: 98px;
+        }
+        .box .move{
+            overflow: hidden;
+            position: absolute;
+            top: -43px;
+            left: 0;
+        }
+        input{
+            display: block;
+            margin: 0 auto;
+            margin-top: 50px;
+        }
+
+    </style>
+</head>
+<body>
+    <input type="text" disabled=true value=0>
+    <table class="box" rules="all" border="2">
+        <tbody class="move">
+            <tr>
+                <td class="black"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="black"></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td class="black"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="black"></td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        function Game(){
+            this.move  = document.querySelector(".move");
+            this.tr    = document.querySelectorAll("tr");
+            this.input = document.querySelector("input");
+            that = this;
+        }
+
+        Game.prototype = {
+
+            // 点击去掉黑色
+            black : function(){
+                this.updateNodes();
+                move.onclick = function(e){
+                    e = e || window.event;
+                    if(e.target.className != "black"){
+                        alert("游戏结束");
+                        location.reload();
+                    }else{
+                        e.target.className = "";
+                        input.value++;
+                    }
+                }
+            },
+
+            // 添加元素函数
+            addElement : function(){
+                var tr = document.createElement("tr");
+                tr.innerHTML = '<tr><td></td><td></td><td></td><td></td></tr>';
+                // 随机给一个黑块
+                var i = Math.floor( Math.random()*4);
+                tr.children[i].className = "black";
+                // 添加元素到tbody第一个元素前
+                move.insertBefore(tr,move.children[0]);
+            },
+
+            // 更新节点函数
+            updateNodes : function(){
+                move = document.querySelector(".move");
+                tr  = document.querySelectorAll("tr");
+                input = document.querySelector("input");
+            },
+        
+            // 清空底部节点
+            clearNodes : function(){
+                setInterval(function(){
+                    var move = document.querySelector(".move");
+                    var tr  = document.querySelectorAll("tr");
+                    
+                    if(tr.length >= 6){
+                        // 判断到达底部还有没有黑块
+                        for(var i=0;i<4;i++){
+                            if(tr[tr.length-1].children[i].className == "black"){
+                                alert("游戏结束"); 
+                                location.reload();       
+                            }
+                        }
+                        move.removeChild(move.children[tr.length-1])
+                    }
+                },15)
+            },
+
+            // 动画函数
+            animate : function(obj){
+                var step = 0.2;
+                clearInterval(obj.timer);
+                obj.timer = setInterval(function(){
+                    
+                    if( move.offsetTop >= 0){
+                        that.addElement();
+                        that.updateNodes();
+                        move.style.top = -100+"px";
+                    }
+                    if( input.value % 10 == 0 && input.value != 0){
+                        step = input.value /10;
+                    }
+                    obj.style.top = obj.offsetTop + step + "px";
+                },15)
+            }
+        }
+
+        var game = new Game();
+        game.black();
+        game.animate(this.move);
+        game.clearNodes();
+        
+        
+        
+    </script>
+</body>

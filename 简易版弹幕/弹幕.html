@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .box{
+            width: 800px;
+            margin: 0 auto;
+        }
+        .box .content{
+            height: 400px;
+            background: url(images/bg.jpg);
+            background-size:cover;
+            position: relative;
+            color: white;
+
+        }
+        input{
+            width: 700px;
+            border: 2px solid #f7f7f7;
+            margin-left: 15px;
+            margin-top: 2px;
+            background-color: #f4f4f4;
+            color:#9f9f9f;
+            outline: none;
+            font-size: 14px;
+            height: 25px;
+            vertical-align: bottom;
+        }
+        .box .bottom{
+            position: relative;
+            height:35px;
+            border: 2px solid #f4f4f4}
+        .box .bottom span{
+            position: absolute;
+            width: 20px;
+            height:20px;
+        }
+        .box .bottom span img{
+            width: 20px;
+            height: 20px;
+            padding-top:6px;
+            padding-bottom: 6px;
+            margin-left: -25px;
+            cursor: pointer;
+            z-index: 999;
+        }
+        .box .bottom button{
+            height: 28px;
+            width:60px;
+            background-color: #009ee6;
+            border: none;
+            position: absolute;
+            top:2px;
+            left: 720px;
+            color: white;
+        }
+        .box .content .biaoqing{
+            position: absolute;
+            width: 360px;
+            height: 125px;
+            right: 0;
+            bottom: -4px;
+            background-color: #f7feff;
+            display: none;
+            border: 1px solid #eeeeee;
+            cursor: pointer;
+        }
+        .fl{
+            float: left;
+        }
+        .content span{
+            position: absolute;
+            left: 800px;
+            top: 0;	
+            white-space: nowrap;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="content">
+            <div class="biaoqing">
+            </div>
+        </div>
+        <div class="bottom">
+            <input type="text" placeholder="发个弹幕见证当下">
+            <span>
+                <img src="images/biaoqing.png" alt="">
+            </span>
+            <button >发送</button>
+        </div>
+    </div>
+
+    <!-- 表情 -->
+    <!-- <script src="js/animate.js"></script> -->
+    <script src="js/varObject.js"></script>
+    <script>
+        var bq = $(".box .biaoqing");
+        for(var i=1; i<76;i++){
+            var img = document.createElement("img");
+            img.className = "fl";
+            img.src = "images/"+i+".gif";
+            bq.appendChild(img)
+        }
+
+        // 点击表情弹出表情窗口
+        var icon = $(".box .bottom span img");
+        console.log(icon)
+        var bqs = $(".box .biaoqing img");
+        var input = $(".bottom input");
+        var btn = $(".bottom button");
+        var content = $(".box .content");
+
+        icon.onclick = function(){
+            if(bq.style.display == "none" ){
+                bq.style.display = "block";
+            }else{
+                bq.style.display = "none";
+            }
+        }
+
+        for(var i=0; i<bqs.length;i++){
+            bqs[i].onclick = function(){
+                bq.style.display = "none";
+                var arr = this.src.split("/");
+                var fileName = arr[arr.length-1].split(".")[0];
+                input.value += "[em_"+fileName+"]";
+            }
+        }
+
+        btn.onclick = function(){
+            if(input.value == ""){
+                alert("您还没输入内容");
+                return;
+            }
+            var reg = /\[em_([0-9]*)\]/gi;
+            var str = input.value.replace(reg, "<img src='images/$1.gif'/>");
+            var span = document.createElement("span");
+            var spanTop = Math.random()*380;
+            span.style.top = spanTop+"px";
+            span.innerHTML = str;
+            content.appendChild( span )
+            animate(span,0, function(){
+                span.remove();
+            });
+            input.value = "";
+            
+        }
+    </script>
+
+    <script>
+        function animate(obj,target,callback){
+            clearInterval( obj.timer );
+            obj.timer = setInterval(function(){
+                var step = -2;
+                if( obj.offsetLeft == target ){
+                    clearInterval( obj.timer );
+                    if( callback ){
+                        callback();
+                    }
+                }else{
+                    obj.style.left = obj.offsetLeft + step + "px"
+                }
+            },15)
+        }
+    </script>
+</body>
+</html>
